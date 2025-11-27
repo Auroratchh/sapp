@@ -1,24 +1,25 @@
 package com.example.routes
 
-import com.example.models.Album
-import com.example.services.AlbumService
+import com.example.models.Song
+import com.example.services.SongService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.albumRoutes(albumService: AlbumService) {
-    route("/albums") {
+
+fun Route.songRoutes(songService: SongService) {
+    route("/songs") {
         post {
-            val album = call.receive<Album>()
-            val created = albumService.createAlbum(album)
+            val song = call.receive<Song>()
+            val created = songService.createSong(song)
             call.respond(HttpStatusCode.Created, created)
         }
 
         get {
-            val albums = albumService.getAllAlbums()
-            call.respond(albums)
+            val songs = songService.getAllSongs()
+            call.respond(songs)
         }
 
         get("/{id}") {
@@ -27,11 +28,11 @@ fun Route.albumRoutes(albumService: AlbumService) {
                 call.respond(HttpStatusCode.BadRequest, "ID inválido")
                 return@get
             }
-            val album = albumService.getAlbumById(id)
-            if (album == null) {
-                call.respond(HttpStatusCode.NotFound, "Álbum no encontrado")
+            val song = songService.getSongById(id)
+            if (song == null) {
+                call.respond(HttpStatusCode.NotFound, "Canción no encontrada")
             } else {
-                call.respond(album)
+                call.respond(song)
             }
         }
 
@@ -41,12 +42,12 @@ fun Route.albumRoutes(albumService: AlbumService) {
                 call.respond(HttpStatusCode.BadRequest, "ID inválido")
                 return@put
             }
-            val album = call.receive<Album>()
-            val updated = albumService.updateAlbum(id, album)
+            val song = call.receive<Song>()
+            val updated = songService.updateSong(id, song)
             if (updated) {
-                call.respond(HttpStatusCode.OK, "Álbum actualizado")
+                call.respond(HttpStatusCode.OK, "Canción actualizada")
             } else {
-                call.respond(HttpStatusCode.NotFound, "Álbum no encontrado")
+                call.respond(HttpStatusCode.NotFound, "Canción no encontrada")
             }
         }
 
@@ -56,11 +57,11 @@ fun Route.albumRoutes(albumService: AlbumService) {
                 call.respond(HttpStatusCode.BadRequest, "ID inválido")
                 return@delete
             }
-            val deleted = albumService.deleteAlbum(id)
+            val deleted = songService.deleteSong(id)
             if (deleted) {
-                call.respond(HttpStatusCode.OK, "Álbum eliminado")
+                call.respond(HttpStatusCode.OK, "Canción eliminada")
             } else {
-                call.respond(HttpStatusCode.NotFound, "Álbum no encontrado")
+                call.respond(HttpStatusCode.NotFound, "Canción no encontrada")
             }
         }
     }
